@@ -1,4 +1,4 @@
-from lis.models import Course, Session, SessionType, SessionFormat, Librarian
+from lis.models import *
 from django.contrib import admin
 
 class CourseAdmin(admin.ModelAdmin):
@@ -6,7 +6,7 @@ class CourseAdmin(admin.ModelAdmin):
               'course_location', 'academic_location', 'academic_term',
               'snapshot_date','students']
 
-    list_display = ('academic_field', 'academic_course_number')
+    list_display = ('academic_term', 'academic_field', 'academic_course_number')
 
 admin.site.register(Course, CourseAdmin)
 
@@ -23,3 +23,4 @@ admin.site.register(Session, SessionAdmin)
 admin.site.register(SessionType)
 admin.site.register(SessionFormat)
 admin.site.register(Librarian)
+admin.site.register(Student)

@@ -43,6 +43,8 @@ class Session(models.Model):
     gov_docs = models.BooleanField(blank=True)
     session_format = models.ForeignKey("SessionFormat", null=True)
     course = models.ForeignKey(Course)
+    def __unicode__(self):
+        return u'%s - %s' % (self.date, self.session_type)
     class Meta:
         db_table = u'lis_sessions'
 
@@ -56,12 +58,15 @@ class SessionFormat(models.Model):
 
 class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
-    last_name = models.CharField(max_length=40)
-    first_name = models.CharField(max_length=40)
+    last_name = models.CharField(null=True, max_length=40, blank=True)
+    first_name = models.CharField(null=True, max_length=40, blank=True)
     wsu_id = models.IntegerField(unique=True)
     network_id = models.CharField(max_length=40, blank=True)
-    def __unicode__(self):
-        return u'%d' % (self.wsu_id)
+    def __unicode__(self):        
+        if self.first_name and self.last_name:            
+            return u'%s %s' % (self.first_name, self.last_name)
+        else:
+            return u'%d' % (self.wsu_id)
     class Meta:
         db_table = u'lis_students'
 
