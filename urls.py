@@ -5,6 +5,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^reports/$', 'lis.views.reports'),
+    url(r'^reports/(?P<course_id>\d+)/$', 'lis.views.sessions'),                   
     # Examples:
     # url(r'^$', 'sdw.views.home', name='home'),
     # url(r'^sdw/', include('sdw.foo.urls')),

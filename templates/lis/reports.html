@@ -1,0 +1,9 @@
+{% if courses_list %}
+	<ul>
+    {% for course in courses_list %}
+        <li> {{course.academic_field}} {{course.academic_course_number}}</li>
+	{% endfor %}
+    </ul>
+{% else %}
+	<p>No courses found.</p>
+{% endif %}

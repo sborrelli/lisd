@@ -1,0 +1,10 @@
+<h3>Sessions for course {{ course.academic_field }} {{ course.academic_course_number }}:</h3>
+{% if sessions %}
+	<ul>
+    {% for ses in sessions %}
+        <li> {{ses.date}} {{ses.session_type}} {{ses.librarian}}</li>
+	{% endfor %}
+    </ul>
+{% else %}
+	<p>No courses found.</p>
+{% endif %}
