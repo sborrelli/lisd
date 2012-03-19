@@ -2,11 +2,11 @@ from lis.models import *
 from django.contrib import admin
 
 class CourseAdmin(admin.ModelAdmin):
-    fields = ['academic_field', 'academic_course_number', 'instructor',
-              'course_location', 'academic_location', 'academic_term',
+    fields = ['academic_field', 'academic_course_number', 'section',
+              'instructor', 'academic_location', 'academic_term',
               'snapshot_date','students']
 
-    list_display = ('academic_term', 'academic_field', 'academic_course_number')
+    list_display = ('full_name', 'academic_term', 'snapshot_date')
 
 admin.site.register(Course, CourseAdmin)
 
@@ -24,3 +24,4 @@ admin.site.register(SessionType)
 admin.site.register(SessionFormat)
 admin.site.register(Librarian)
 admin.site.register(Student)
+admin.site.register(Location)

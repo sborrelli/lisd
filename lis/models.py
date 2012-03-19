@@ -4,18 +4,30 @@ from django.db import models
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
-    academic_field = models.CharField(max_length=20, blank=True)
-    academic_course_number = models.CharField(max_length=10, blank=True)
+    academic_field = models.CharField(max_length=20)
+    academic_course_number = models.CharField(max_length=10)
+    section = models.CharField(max_length=20, null=True, blank=True)
     instructor = models.CharField(max_length=40, blank=True) 
-    course_location = models.CharField(max_length=20, blank=True)
-    academic_location = models.CharField(max_length=20, blank=True)
+    academic_location = models.ForeignKey("Location")
     academic_term = models.CharField(max_length=20, blank=True)
     snapshot_date = models.DateField(null=True, blank=True)
     students = models.ManyToManyField("Student", blank=True)
-    def __unicode__(self):
+    def full_name(self):
         return u'%s %s' % (self.academic_field, self.academic_course_number)
+    def __unicode__(self):
+        return self.full_name()
     class Meta:
         db_table = u'lis_courses'
+
+class Location(models.Model):
+    location_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=40)
+    description = models.CharField(max_length=200, null=True, blank=True)
+    def __unicode__(self):
+        return u'%s' % (self.name)
+    class Meta:
+        db_table = u'lis_locations'
+    
 
 class Librarian(models.Model):
     librarian_id = models.AutoField(primary_key=True)
