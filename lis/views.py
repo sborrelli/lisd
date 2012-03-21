@@ -1,24 +1,37 @@
-from django.shortcuts import render_to_response
-##from django.template import Context, loader
-##from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
 from lis.models import Course, Session
+from django.template import RequestContext
 
 
-def reports(request):
-    courses = Course.objects.all()    
-##    t = loader.get_template('lis/reports.html')
-##    c = Context({
-##        'courses_list' : courses
-##        })    
-##    return HttpResponse(t.render(c))
+def courses(request):
+    courses = Course.objects.all()
     return render_to_response('lis/reports.html', {'courses_list' : courses})
 
-def sessions(request, course_id):
-    try:
-        c = Course.objects.get(pk=course_id)
-        sessions = Session.objects.filter(course=c)
-    except Course.DoesNotExist:
-        raise Http404
-    return render_to_response('lis/sessions.html', {'course' : c,
-                                                    'sessions' : sessions})
+def sessions(request):
+    params = dict()
+    if request.POST:        
+        if not (request.POST['from_date'] and request.POST['to_date']):
+            params['error_message'] = "Please enter valid dates"
+        else:
+            sessions = Session.objects.filter(date__range=(request.POST['from_date'],
+                                                       request.POST['to_date'])).order_by('date')
+            params['from_date'] = request.POST['from_date']
+            params['to_date'] = request.POST['to_date']
+            params['sessions'] = sessions
+            params['queried'] = True
+    else:
+        message = "Geteo"
+        params['query'] = False
+    return render_to_response('lis/sessions.html', params,
+                              context_instance=RequestContext(request))
+
+def enrollment(request, course_id):
+    c = get_object_or_404(Course, pk=course_id)
+    students = c.students.all()
+    return render_to_response('lis/enrollment.html', {'course' : c,
+                                                      'students' : students})
+
+
+    
+

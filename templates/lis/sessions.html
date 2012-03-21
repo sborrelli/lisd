@@ -1,10 +1,36 @@
-<h3>Sessions for course {{ course.academic_field }} {{ course.academic_course_number }}:</h3>
-{% if sessions %}
-	<ul>
-    {% for ses in sessions %}
-        <li> {{ses.date}} {{ses.session_type}} {{ses.librarian}}</li>
-	{% endfor %}
-    </ul>
-{% else %}
-	<p>No courses found.</p>
+{% extends "base.html" %}
+{% block content %}   
+<h1>Sessions by date</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{{ posted }}
+<form action="/sessions/" method="post">
+{% csrf_token %}
+<label for="from_date">From: </label>
+<input type="text" name="from_date" id="from_date" />
+<label for="to_date">To: </label>
+<input type="text" name="to_date" id="to_date" />
+
+<input type="submit" value="Submit" />
+</form>
+<hr>
+{% if queried %}
+	<h3>Sessions held between {{ from_date }} and {{ to_date }}:</h3>
+	{% if sessions %}
+	<table border="1" cellpadding="2">
+	<tr>
+	<th>Date</th><th>Type</th><th>Librarian</th>
+	</tr>		
+		{% for ses in sessions %}
+		<tr>
+			<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
+			<td>{{ses.session_type}} </td>
+			<td>{{ses.librarian}}</td>
+		</tr>	
+		{% endfor %}
+	</table>
+	{% else %}
+		<p>No sessions found.</p>
+	{% endif %}
 {% endif %}
+{% endblock %}  

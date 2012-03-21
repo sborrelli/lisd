@@ -5,8 +5,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^reports/$', 'lis.views.reports'),
-    url(r'^reports/(?P<course_id>\d+)/$', 'lis.views.sessions'),                   
+    url(r'^courses/$', 'lis.views.courses'),
+    url(r'^sessions/$', 'lis.views.sessions'),
+    url(r'^enrollment/(?P<course_id>\d+)/$', 'lis.views.enrollment'),
+    #url(r'^listall/(?P<course_id>\d+)/$', 'lis.views.listall'),
     # Examples:
     # url(r'^$', 'sdw.views.home', name='home'),
     # url(r'^sdw/', include('sdw.foo.urls')),

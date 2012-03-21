@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}   
+<h3>Students in all courses</h3>
+{% if students %}
+<table>
+<tr>
+<th>Student ID</th>
+</tr> 	
+    {% for s in students %}
+	<tr>    
+		<td> {{ s.wsu_id }}</td>
+	</tr>
+	{% endfor %}
+</table>    
+{% else %}
+	<p>No students found.</p>
+{% endif %}
+{% endblock %}   
