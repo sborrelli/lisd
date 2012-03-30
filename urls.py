@@ -8,6 +8,8 @@ urlpatterns = patterns('',
     url(r'^courses/$', 'lis.views.courses'),
     url(r'^sessions/$', 'lis.views.sessions'),
     url(r'^enrollment/(?P<course_id>\d+)/$', 'lis.views.enrollment'),
+    url(r'^students_by_courses/$', 'lis.views.students_by_courses'),
+    url(r'^excel/$', 'lis.views.excelample'),                       
     #url(r'^listall/(?P<course_id>\d+)/$', 'lis.views.listall'),
     # Examples:
     # url(r'^$', 'sdw.views.home', name='home'),

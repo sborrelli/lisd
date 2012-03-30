@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}   
+<h1>Students in courses</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{{ posted }}
+<form action="/students_by_courses/" method="post">
+{% csrf_token %}
+<label for="courses">Select one or more courses </label><br>
+<select multiple="multiple" name="courses" id="courses">
+	{% for course in courses %}
+	<option value="{{course.course_id}}">{{course.full_name}}</option>
+	{% endfor %}
+</select>
+<br />
+<input type="submit" value="Submit" />
+</form>
+<hr>
+{% if waka_waka %}
+{{waka_waka}}
+{% endif %}
+{% if queried %}
+	<h3>Students in {{ sel_courses }}</h3>
+	{% if students %}
+	<table border="1" cellpadding="2">
+	<tr>
+	<th></th><th>WSU ID</th>
+	</tr>		
+		{% for stu in students %}
+		<tr>
+			<td>{{forloop.counter}}</td>
+			<td> <a href="/admin/lis/student/{{stu.student_id}}/">{{stu.wsu_id}}</a></td> 			
+		</tr>	
+		{% endfor %}
+	</table>
+	{% else %}
+		<p>No students found.</p>
+	{% endif %}
+{% endif %}
+{% endblock %}  

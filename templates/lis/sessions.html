@@ -10,25 +10,43 @@
 <input type="text" name="from_date" id="from_date" />
 <label for="to_date">To: </label>
 <input type="text" name="to_date" id="to_date" />
-
+<input type="hidden" name="responsetype" value="html" />
 <input type="submit" value="Submit" />
 </form>
 <hr>
 {% if queried %}
 	<h3>Sessions held between {{ from_date }} and {{ to_date }}:</h3>
 	{% if sessions %}
-	<table border="1" cellpadding="2">
-	<tr>
-	<th>Date</th><th>Type</th><th>Librarian</th>
-	</tr>		
-		{% for ses in sessions %}
+	<div style="float: left">
+		<table border="1" cellpadding="2">
 		<tr>
-			<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
-			<td>{{ses.session_type}} </td>
-			<td>{{ses.librarian}}</td>
-		</tr>	
-		{% endfor %}
-	</table>
+		<th>Date</th><th>Type</th><th>Librarian</th><th>Course</th><th>Students</th>
+		</tr>		
+			{% for ses in sessions %}
+			<tr>
+				<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
+				<td>{{ses.session_type}} </td>
+				<td>{{ses.librarian}}</td>
+				<td>{{ses.course.full_name}}</td>
+				<td>{{ses.course.students.count}}</td>
+			</tr>	
+			{% endfor %}
+			<tr><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+		</table>
+	</div>
+	<div style="float: left">
+		<form id="excelform" action="/sessions/" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="from_date" value="{{ from_date }}" />
+			<input type="hidden" name="to_date" value="{{ to_date }}" />
+			<input type="hidden" name="responsetype" value="excel" />					
+			<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
+			<img src="/static/excel.jpg" width="32" height="32"/>
+			</a>
+		</form>
+	</div>	
+	<div style="clear: both">
+	<div class="info">Unique students reached: {{totalunique}}</div>
 	{% else %}
 		<p>No sessions found.</p>
 	{% endif %}
