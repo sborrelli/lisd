@@ -52,7 +52,10 @@ def students_by_courses(request):
     if request.POST:
         params['queried'] = True
         studs = []
-        selected_ids = request.POST.getlist('courses')
+        if request.POST['responsetype'] == 'excel':
+            selected_ids = request.POST['courses_list'].split('-')
+        else:
+            selected_ids = request.POST.getlist('courses')
         selected_courses = [ c for c in courses if str(c.course_id) in selected_ids ]
         params['sel_courses'] = ", ".join([ n.full_name() for n in selected_courses ])
         for cid in selected_ids:            
@@ -65,7 +68,12 @@ def students_by_courses(request):
             inter = [ x for x in students if x in studs[i] ]
             #students = list(inter)
             students = inter
-        params['students'] = students       
+        params['students'] = students
+        params['courses_list'] = "-".join(selected_ids)
+        if request.POST['responsetype'] == "excel":                        
+            htmlstring = render_to_string('lis/students_by_courses.html', params,
+                              context_instance=RequestContext(request))
+            return table_to_excel(request, htmlstring, "Students by courses")
     else:        
         params['queried'] = False        
     return render_to_response('lis/students_by_courses.html', params,
@@ -77,20 +85,20 @@ def enrollment(request, course_id):
     return render_to_response('lis/enrollment.html', {'course' : c,
                                                       'students' : students})
 
-def excelample(request):
-    response = HttpResponse(mimetype="application/ms-excel")
-    response['Content-Disposition'] = 'attachment; filename=file.xls'
-    
-    wb = xlwt.Workbook()
-    ws = wb.add_sheet('Sheetname')
-    
-    ws.write(0, 0, 'Firstname')
-    ws.write(0, 1, 'Surname')
-    ws.write(1, 0, 'Hans')
-    ws.write(1, 1, 'Muster')
-
-    wb.save(response)
-    return response
+##def excelample(request):
+##    response = HttpResponse(mimetype="application/ms-excel")
+##    response['Content-Disposition'] = 'attachment; filename=file.xls'
+##    
+##    wb = xlwt.Workbook()
+##    ws = wb.add_sheet('Sheetname')
+##    
+##    ws.write(0, 0, 'Firstname')
+##    ws.write(0, 1, 'Surname')
+##    ws.write(1, 0, 'Hans')
+##    ws.write(1, 1, 'Muster')
+##
+##    wb.save(response)
+##    return response
 
 def table_to_excel(request, htmlstring, bookname):
     response = HttpResponse(mimetype="application/ms-excel")
@@ -114,7 +122,14 @@ def table_to_excel(request, htmlstring, bookname):
                 #write cells
                 cellstart = htmlstring.find('<td', cellstart + 1)
                 cellend = htmlstring.find('</td', cellstart + 1)
-                cellcontent = htmlstring[cellstart+4:cellend]
+                #strip <a> tags
+                linkstart = htmlstring.find('<a ', cellstart, cellend)
+                if linkstart > -1:
+                    cellstart = htmlstring.find('>', linkstart)
+                    cellend = htmlstring.find('</a>', cellstart + 1)
+                    cellcontent = htmlstring[cellstart+1:cellend]
+                else:
+                    cellcontent = htmlstring[cellstart+4:cellend]
                 #print "row", i, "col", j, "cont:", cellcontent                
                 ws.write(i, j, cellcontent)
                 cellstart = cellend

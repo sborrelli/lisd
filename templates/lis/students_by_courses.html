@@ -13,26 +13,41 @@
 	{% endfor %}
 </select>
 <br />
+<input type="hidden" name="responsetype" value="html" />
 <input type="submit" value="Submit" />
 </form>
 <hr>
-{% if waka_waka %}
-{{waka_waka}}
-{% endif %}
-{% if queried %}
-	<h3>Students in {{ sel_courses }}</h3>
+
+{% if queried %}	
 	{% if students %}
-	<table border="1" cellpadding="2">
-	<tr>
-	<th></th><th>WSU ID</th>
-	</tr>		
-		{% for stu in students %}
+	<div id="tablecontent" style="position: relative">
+	<div>
+		<table border="1" cellpadding="2">
 		<tr>
-			<td>{{forloop.counter}}</td>
-			<td> <a href="/admin/lis/student/{{stu.student_id}}/">{{stu.wsu_id}}</a></td> 			
-		</tr>	
-		{% endfor %}
-	</table>
+		<th></th><th>Students in {{ sel_courses }}</th>
+		</tr>
+		<tr>
+		<th></th><th>WSU ID</th>
+		</tr>		
+			{% for stu in students %}
+			<tr>
+				<td>{{forloop.counter}}</td>
+				<td> <a href="/admin/lis/student/{{stu.student_id}}/">{{stu.wsu_id}}</a></td> 			
+			</tr>	
+			{% endfor %}
+		</table>
+	</div>
+	<div>
+		<form id="excelform" action="/students_by_courses/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="courses_list" value="{{ courses_list }}" />				
+				<input type="hidden" name="responsetype" value="excel" />					
+				<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
+				<img src="/static/excel.jpg" width="32" height="32"/>
+				</a>
+		</form>
+		</div>
+	</div>	
 	{% else %}
 		<p>No students found.</p>
 	{% endif %}
