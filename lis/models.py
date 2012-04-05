@@ -49,7 +49,10 @@ class SessionType(models.Model):
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True)
-    librarian = models.ForeignKey(Librarian)    
+    librarian = models.ForeignKey(Librarian, related_name='sessions_mainlibrarian')
+    librarians = models.ManyToManyField(Librarian, blank=True,
+                                        help_text="Use for multiple librarians",
+                                        verbose_name="Multiple Librarians")
     session_type = models.ForeignKey(SessionType)
     description = models.CharField(null=True, blank=True, max_length=200)
     number_of_users = models.IntegerField(null=True, blank=True)

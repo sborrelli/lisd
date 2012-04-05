@@ -11,7 +11,7 @@ class CourseAdmin(admin.ModelAdmin):
 admin.site.register(Course, CourseAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
-    fields = ['date', 'session_type', 'librarian', 'session_format', 
+    fields = ['date', 'session_type', 'librarian', 'librarians', 'session_format', 
               'description', 'location', 'course',
               'number_of_users', 'gov_docs']
 
