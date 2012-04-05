@@ -11,12 +11,13 @@ class CourseAdmin(admin.ModelAdmin):
 admin.site.register(Course, CourseAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
-    fields = ['date', 'session_type', 'session_format', 'librarian', 'location',
-              'course','gov_docs']
+    fields = ['date', 'session_type', 'librarian', 'session_format', 
+              'description', 'location', 'course',
+              'number_of_users', 'gov_docs']
 
-    list_display = ('date', 'session_type', 'librarian')
+    list_display = ('date', 'session_type', 'librarian', 'course')
 
-    list_filter = ['date', 'session_type']
+    list_filter = ['date', 'session_type', 'librarian']
 
 admin.site.register(Session, SessionAdmin)
 

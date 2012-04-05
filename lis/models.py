@@ -13,7 +13,7 @@ class Course(models.Model):
     snapshot_date = models.DateField(null=True, blank=True)
     students = models.ManyToManyField("Student", blank=True)
     def full_name(self):
-        return u'%s %s' % (self.academic_field, self.academic_course_number)
+        return u'%s - %s %s' % (self.academic_term, self.academic_field, self.academic_course_number)
     def __unicode__(self):
         return self.full_name()
     class Meta:
@@ -49,12 +49,14 @@ class SessionType(models.Model):
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True)
-    librarian = models.ForeignKey(Librarian)
+    librarian = models.ForeignKey(Librarian)    
     session_type = models.ForeignKey(SessionType)
-    location = models.CharField(max_length=40, blank=True)
+    description = models.CharField(null=True, blank=True, max_length=200)
+    number_of_users = models.IntegerField(null=True, blank=True)
+    location = models.CharField(max_length=40, blank=True, null=True)
     gov_docs = models.BooleanField(blank=True)
     session_format = models.ForeignKey("SessionFormat", null=True)
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course, null=True, blank=True)
     def __unicode__(self):
         return u'%s - %s' % (self.date, self.session_type)
     class Meta:
