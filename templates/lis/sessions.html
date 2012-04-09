@@ -14,25 +14,28 @@
 <input type="submit" value="Submit" />
 </form>
 <hr>
-{% if queried %}
-	<h3>Sessions held between {{ from_date }} and {{ to_date }}:</h3>
+{% if queried %}	
 	{% if sessions %}
 	<div id="tablecontent" style="position: relative">
 		<div style="float: left; width: 50%">
 			<table border="1" cellpadding="2">
 			<tr>
-			<th>Date</th><th>Type</th><th>Librarian</th><th>Course</th><th>Students</th>
+			<th>Sessions held between </th><th>{{ from_date }}</th><th></th><th>and</th><th>{{ to_date }}</th><th></th>			
+			</tr>
+			<tr>			
+			<th>Date</th><th>Type</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
 			</tr>		
 				{% for ses in sessions %}
 				<tr>
 					<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
 					<td>{{ses.session_type}} </td>
 					<td>{{ses.librarian}}</td>
-					<td>{{ses.course.full_name}}</td>
-					<td>{{ses.course.students.count}}</td>
+					<td>{{ses.number_of_users}}</td>
+					<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
+					<td>{% if ses.course %} {{ses.course.students.count}} {% endif %}</td>
 				</tr>	
 				{% endfor %}
-				<tr><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+				<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
 			</table>
 		</div>
 		<div style="float: left; position: absolute; bottom:32px; left: 52%">

@@ -27,8 +27,9 @@ def sessions(request):
                 params['sessions'] = sessions
                 params['queried'] = True
                 for s in sessions:
-                    total += s.course.students.count()
-                    totalunique.extend(s.course.students.all())
+                    if s.course:
+                        total += s.course.students.count()
+                        totalunique.extend(s.course.students.all())
                 params['total'] = total
                 params['totalunique'] = len(set(totalunique))
             except ValidationError:
