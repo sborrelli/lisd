@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div id="content-main">
+<div class="module">
+<h1>Library Instruction Value Project</h1>
+<h2>Views</h2>
+<ul>
+<li><a href="{% url lis.views.sessions %}">Sessions</a></li>
+<li><a href="{% url lis.views.sessions %}">Students by course</a></li>
+</ul>
+<h2>Admin</h2>
+<ul>
+<li><a href="/admin/">Site Administration</a></li>
+</ul>
+<br>
+</div>
+</div>
+{% endblock %}

@@ -86,21 +86,6 @@ def enrollment(request, course_id):
     return render_to_response('lis/enrollment.html', {'course' : c,
                                                       'students' : students})
 
-##def excelample(request):
-##    response = HttpResponse(mimetype="application/ms-excel")
-##    response['Content-Disposition'] = 'attachment; filename=file.xls'
-##    
-##    wb = xlwt.Workbook()
-##    ws = wb.add_sheet('Sheetname')
-##    
-##    ws.write(0, 0, 'Firstname')
-##    ws.write(0, 1, 'Surname')
-##    ws.write(1, 0, 'Hans')
-##    ws.write(1, 1, 'Muster')
-##
-##    wb.save(response)
-##    return response
-
 def table_to_excel(request, htmlstring, bookname):
     response = HttpResponse(mimetype="application/ms-excel")
     response['Content-Disposition'] = 'attachment; filename=%s.xls' % (bookname)
@@ -138,4 +123,5 @@ def table_to_excel(request, htmlstring, bookname):
     wb.save(response)
     return response    
     
-
+def default(request):
+    return render_to_response('lis/default.html')
