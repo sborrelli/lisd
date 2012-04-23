@@ -1,1 +1,4 @@
-#.hgignoresyntax: glob*.pyc#*.s3db
+#.hgignore
+syntax: glob
+*.pyc
+#*.s3db
