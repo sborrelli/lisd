@@ -2,18 +2,21 @@ from lis.models import *
 from django.contrib import admin
 
 class CourseAdmin(admin.ModelAdmin):
-    fields = ['academic_field', 'academic_course_number', 'section',
-              'instructor', 'academic_location', 'academic_term',
-              'snapshot_date','students']
+    fields = ['academic_field', 'academic_course_number', 'description', 'academic_location']
 
-    list_display = ('full_name', 'academic_term', 'snapshot_date')
+    list_display = ('full_name',)
 
 admin.site.register(Course, CourseAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
-    fields = ['date', 'session_type', 'librarian', 'librarians', 'session_format', 
-              'description', 'location', 'course',
-              'number_of_users', 'gov_docs']
+    fieldsets = [
+        (None,                  {'fields': ['date', 'session_type', 'librarian',
+                                           'librarians', 'session_format', 'description',
+                                           'number_of_users', 'gov_docs']}),
+        ('Course Information',  {'fields': ['course', 'section',
+                                           'academic_term', 'instructor']}),
+        ('Students',            {'fields': ['students'], 'classes': ['collapse']}),                        
+    ]    
 
     list_display = ('date', 'session_type', 'librarian', 'course')
 

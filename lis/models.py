@@ -6,14 +6,15 @@ class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
     academic_field = models.CharField(max_length=20)
     academic_course_number = models.CharField(max_length=10)
-    section = models.CharField(max_length=20, null=True, blank=True)
-    instructor = models.CharField(max_length=40, blank=True) 
+    description = models.CharField(null=True, blank=True, max_length=200)
+    #section = models.CharField(max_length=20, null=True, blank=True)
+    #instructor = models.CharField(max_length=40, blank=True) 
     academic_location = models.ForeignKey("Location")
-    academic_term = models.CharField(max_length=20, blank=True)
-    snapshot_date = models.DateField(null=True, blank=True)
-    students = models.ManyToManyField("Student", blank=True)
+    #academic_term = models.CharField(max_length=20, blank=True)
+    #snapshot_date = models.DateField(null=True, blank=True)
+    #students = models.ManyToManyField("Student", blank=True)
     def full_name(self):
-        return u'%s - %s %s' % (self.academic_term, self.academic_field, self.academic_course_number)
+        return u'%s %s' % (self.academic_field, self.academic_course_number)
     def __unicode__(self):
         return self.full_name()
     class Meta:
@@ -57,9 +58,14 @@ class Session(models.Model):
     description = models.CharField(null=True, blank=True, max_length=200)
     number_of_users = models.IntegerField(null=True, blank=True)
     location = models.CharField(max_length=40, blank=True, null=True)
-    gov_docs = models.BooleanField(blank=True)
+    gov_docs = models.BooleanField('Government Docs',blank=True)
     session_format = models.ForeignKey("SessionFormat", null=True)
+    #course information
     course = models.ForeignKey(Course, null=True, blank=True)
+    section = models.CharField(max_length=20, null=True, blank=True)
+    academic_term = models.CharField(max_length=20, blank=True)
+    instructor = models.CharField(max_length=40, blank=True, null=True)
+    students = models.ManyToManyField("Student", blank=True)
     def __unicode__(self):
         return u'%s - %s' % (self.date, self.session_type)
     class Meta:
