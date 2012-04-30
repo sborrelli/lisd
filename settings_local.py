@@ -3,9 +3,6 @@
 DEVELOPMENT_HOST = 'HOL9055669LI'
 PRODUCTION_HOST = 'libstats'
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
 ADMINS = (
     ('Dario Alvarez', 'dario.alvarezmiranda@wsu.edu'),
     ('Steve Borrelli', 'sborrelli@wsu.edu'),

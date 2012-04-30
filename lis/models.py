@@ -38,6 +38,7 @@ class Librarian(models.Model):
         return u'%s %s' % (self.first_name, self.last_name)
     class Meta:
         db_table = u'lis_librarians'
+        ordering=['last_name']
 
 class SessionType(models.Model):
     session_type_id = models.AutoField(primary_key=True)
@@ -50,7 +51,8 @@ class SessionType(models.Model):
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True)
-    librarian = models.ForeignKey(Librarian, related_name='sessions_mainlibrarian')
+    librarian = models.ForeignKey(Librarian,
+                                  related_name='sessions_mainlibrarian')
     librarians = models.ManyToManyField(Librarian, blank=True,
                                         help_text="Use for multiple librarians",
                                         verbose_name="Multiple Librarians")
@@ -70,6 +72,8 @@ class Session(models.Model):
         return u'%s - %s' % (self.date, self.session_type)
     class Meta:
         db_table = u'lis_sessions'
+    #admin meta info
+    #librarian.admin_order_field = 'first_name'    
 
 class SessionFormat(models.Model):
     session_format_id = models.AutoField(primary_key=True)

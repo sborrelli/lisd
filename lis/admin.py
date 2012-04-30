@@ -10,12 +10,11 @@ admin.site.register(Course, CourseAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,                  {'fields': ['date', 'session_type', 'librarian',
-                                           'librarians', 'session_format', 'description',
+        (None,                  {'fields': ['session_format', 'date', 'academic_term', 'session_type',
+                                            'description', 'course', 'section',
+                                           'instructor', 'librarian', 'librarians',
                                            'number_of_users', 'gov_docs']}),
-        ('Course Information',  {'fields': ['course', 'section',
-                                           'academic_term', 'instructor']}),
-        ('Students',            {'fields': ['students'], 'classes': ['collapse']}),                        
+        ('Students',            {'fields': ['students'], 'classes': ['collapse']})
     ]    
 
     list_display = ('date', 'session_type', 'librarian', 'course')

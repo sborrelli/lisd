@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import Http404, HttpResponse
-from lis.models import Course, Session
+from lis.models import Course, Session, Librarian
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
 import xlwt
@@ -15,23 +15,33 @@ def sessions(request):
     params = dict()
     total = 0
     totalunique = []
+    #retrieve list of librarians
+    librarians = Librarian.objects.order_by('last_name')
+    params['librarians'] = librarians
     if request.POST:        
         if not (request.POST['from_date'] and request.POST['to_date']):
             params['error_message'] = "Please enter valid dates"
         else:
             try:
-                sessions = Session.objects.filter(date__range=(request.POST['from_date'],
+                if request.POST['librarian'] == '0':
+                    sessions = Session.objects.filter(date__range=(request.POST['from_date'],
                                                        request.POST['to_date'])).order_by('date')
-                params['from_date'] = request.POST['from_date']
-                params['to_date'] = request.POST['to_date']
+                else:
+                    sessions = Session.objects.filter(date__range=(request.POST['from_date'],
+                                                       request.POST['to_date']), librarian=request.POST['librarian']
+                                                      ).order_by('date')                
                 params['sessions'] = sessions
                 params['queried'] = True
                 for s in sessions:
                     if s.course:
-                        total += s.course.students.count()
-                        totalunique.extend(s.course.students.all())
+                        total += s.students.count()
+                        totalunique.extend(s.students.all())
                 params['total'] = total
                 params['totalunique'] = len(set(totalunique))
+                #reset the POST parameters to show them again
+                params['from_date'] = request.POST['from_date']
+                params['to_date'] = request.POST['to_date']
+                params['librarian'] = request.POST['librarian']
             except ValidationError:
                 params['error_message'] = "Please enter valid dates"
         if request.POST['responsetype'] == "excel":                        
