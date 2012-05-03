@@ -11,11 +11,21 @@
 <label for="to_date">To: </label>
 <input type="text" name="to_date" id="to_date"  value="{{ to_date }}" />
 <input type="hidden" name="responsetype" value="html" />
+<label for="librarian">Librarian: </label>
 <select name="librarian">
 <option value="0">All</option>
 {% for lib in librarians %}
 	<option value="{{ lib.librarian_id }}" {% if lib.librarian_id == librarian %} selected="selected" {% endif %}>
 	{{ lib }}
+	</option>
+{% endfor %}
+</select>
+<label for="session_type">Type: </label>
+<select name="session_type" title="Session Type">
+<option value="0">All</option>
+{% for ses_type in session_types %}
+	<option value="{{ ses_type.session_type_id }}">
+	{{ ses_type }}
 	</option>
 {% endfor %}
 </select>
@@ -51,6 +61,7 @@
 				{% csrf_token %}
 				<input type="hidden" name="from_date" value="{{ from_date }}" />
 				<input type="hidden" name="to_date" value="{{ to_date }}" />
+				<input type="hidden" name="librarian" value="{{ librarian }}" />
 				<input type="hidden" name="responsetype" value="excel" />					
 				<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
 				<img src="/static/excel.jpg" width="32" height="32"/>

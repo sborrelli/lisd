@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import Http404, HttpResponse
-from lis.models import Course, Session, Librarian
+from lis.models import Course, Session, Librarian, SessionType
 from django.template import RequestContext
 from django.core.exceptions import ValidationError
 import xlwt
@@ -15,9 +15,9 @@ def sessions(request):
     params = dict()
     total = 0
     totalunique = []
-    #retrieve list of librarians
-    librarians = Librarian.objects.order_by('last_name')
-    params['librarians'] = librarians
+    #retrieve lists of librarians and ses types
+    params['librarians'] = Librarian.objects.order_by('last_name')
+    params['session_types'] = SessionType.objects.order_by('name')
     if request.POST:        
         if not (request.POST['from_date'] and request.POST['to_date']):
             params['error_message'] = "Please enter valid dates"

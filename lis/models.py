@@ -9,7 +9,7 @@ class Course(models.Model):
     description = models.CharField(null=True, blank=True, max_length=200)
     #section = models.CharField(max_length=20, null=True, blank=True)
     #instructor = models.CharField(max_length=40, blank=True) 
-    academic_location = models.ForeignKey("Location")
+    academic_location = models.ForeignKey("Location", null=True, blank=True)
     #academic_term = models.CharField(max_length=20, blank=True)
     #snapshot_date = models.DateField(null=True, blank=True)
     #students = models.ManyToManyField("Student", blank=True)
@@ -19,6 +19,7 @@ class Course(models.Model):
         return self.full_name()
     class Meta:
         db_table = u'lis_courses'
+        ordering=['academic_field', 'academic_course_number']
 
 class Location(models.Model):
     location_id = models.AutoField(primary_key=True)
@@ -48,6 +49,18 @@ class SessionType(models.Model):
     class Meta:
         db_table = u'lis_session_types'
 
+def typedefault():
+    t = SessionType.objects.filter(name='Course Related Instruction')
+    if t:
+        return t[0].session_type_id
+    return
+
+def formatdefault():
+    f = SessionFormat.objects.filter(format_name='In Person')
+    if f:
+        return f[0].session_format_id
+    return
+
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True)
@@ -55,16 +68,20 @@ class Session(models.Model):
                                   related_name='sessions_mainlibrarian')
     librarians = models.ManyToManyField(Librarian, blank=True,
                                         help_text="Use for multiple librarians",
-                                        verbose_name="Multiple Librarians")
-    session_type = models.ForeignKey(SessionType)
+                                        verbose_name="Multiple Librarians")    
+    session_type = models.ForeignKey(SessionType, default=typedefault)
+    
     description = models.CharField(null=True, blank=True, max_length=200)
     number_of_users = models.IntegerField(null=True, blank=True)
     location = models.CharField(max_length=40, blank=True, null=True)
     gov_docs = models.BooleanField('Government Docs',blank=True)
-    session_format = models.ForeignKey("SessionFormat", null=True)
+    session_format = models.ForeignKey("SessionFormat", null=True, default=formatdefault)
     #course information
+    campus = models.ForeignKey("Location", null=True, blank=True)
     course = models.ForeignKey(Course, null=True, blank=True)
-    section = models.CharField(max_length=20, null=True, blank=True)
+    SECTIONS = tuple ( [ (str(i),str(i)) for i in range(1,21) ] )
+    section = models.CharField(max_length=20, null=True, blank=True,
+                               choices=SECTIONS)
     academic_term = models.CharField(max_length=20, blank=True)
     instructor = models.CharField(max_length=40, blank=True, null=True)
     students = models.ManyToManyField("Student", blank=True)
@@ -73,7 +90,13 @@ class Session(models.Model):
     class Meta:
         db_table = u'lis_sessions'
     #admin meta info
-    #librarian.admin_order_field = 'first_name'    
+    #librarian.admin_order_field = 'first_name'
+
+##def typedefault():
+##        t = SessionType.objects.filter(name='Course Related Instruction')
+##        if t:
+##            return t[0].session_type_id
+##        return
 
 class SessionFormat(models.Model):
     session_format_id = models.AutoField(primary_key=True)

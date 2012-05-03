@@ -10,7 +10,7 @@ admin.site.register(Course, CourseAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,                  {'fields': ['session_format', 'date', 'academic_term', 'session_type',
+        (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
                                             'description', 'course', 'section',
                                            'instructor', 'librarian', 'librarians',
                                            'number_of_users', 'gov_docs']}),
