@@ -4,15 +4,13 @@ from django.db import models
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
-    academic_field = models.CharField(max_length=20)
+    academic_field = models.CharField(max_length=20,
+        help_text='''Please use official departmental abbreviations <br>
+(e.g. English = ENGL, Chemistry = CHEM).<br>See schedule of classes
+for official abbreviations''')
     academic_course_number = models.CharField(max_length=10)
-    description = models.CharField(null=True, blank=True, max_length=200)
-    #section = models.CharField(max_length=20, null=True, blank=True)
-    #instructor = models.CharField(max_length=40, blank=True) 
-    academic_location = models.ForeignKey("Location", null=True, blank=True)
-    #academic_term = models.CharField(max_length=20, blank=True)
-    #snapshot_date = models.DateField(null=True, blank=True)
-    #students = models.ManyToManyField("Student", blank=True)
+    description = models.CharField(null=True, blank=True, max_length=200)    
+    academic_location = models.ForeignKey("Location", null=True, blank=True)    
     def full_name(self):
         return u'%s %s' % (self.academic_field, self.academic_course_number)
     def __unicode__(self):
@@ -63,16 +61,20 @@ def formatdefault():
 
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
-    date = models.DateField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True,
+            help_text="Please use the following format: <em>YYYY-MM-DD</em>.")
     librarian = models.ForeignKey(Librarian,
-                                  related_name='sessions_mainlibrarian')
+                                  related_name='sessions_mainlibrarian',
+                                  help_text="Use for sessions with one librarian.<br>Otherwise, select <em>Multiple</em> and specify below.")
     librarians = models.ManyToManyField(Librarian, blank=True,
-                                        help_text="Use for multiple librarians",
+                                        help_text="Use for multiple librarians.<br>",
                                         verbose_name="Multiple Librarians")    
     session_type = models.ForeignKey(SessionType, default=typedefault)
     
-    description = models.CharField(null=True, blank=True, max_length=200)
-    number_of_users = models.IntegerField(null=True, blank=True)
+    description = models.CharField(null=True, blank=True, max_length=200,
+                    help_text="E.g. Zotero, Cougar Kids, etc.")
+    number_of_users = models.IntegerField(null=True, blank=True,
+                        help_text="Optional. Enter only if known.")
     location = models.CharField(max_length=40, blank=True, null=True)
     gov_docs = models.BooleanField('Government Docs',blank=True)
     session_format = models.ForeignKey("SessionFormat", null=True, default=formatdefault)
@@ -82,21 +84,15 @@ class Session(models.Model):
     SECTIONS = tuple ( [ (str(i),str(i)) for i in range(1,21) ] )
     section = models.CharField(max_length=20, null=True, blank=True,
                                choices=SECTIONS)
-    academic_term = models.CharField(max_length=20, blank=True)
-    instructor = models.CharField(max_length=40, blank=True, null=True)
+    academic_term = models.CharField(max_length=20, blank=True,
+                    help_text="Enter term and year e.g. Fall 2012.")
+    instructor = models.CharField(max_length=40, blank=True, null=True,
+                        help_text="<em>Last, First</em> if known, otherwise just last name")
     students = models.ManyToManyField("Student", blank=True)
     def __unicode__(self):
         return u'%s - %s' % (self.date, self.session_type)
     class Meta:
         db_table = u'lis_sessions'
-    #admin meta info
-    #librarian.admin_order_field = 'first_name'
-
-##def typedefault():
-##        t = SessionType.objects.filter(name='Course Related Instruction')
-##        if t:
-##            return t[0].session_type_id
-##        return
 
 class SessionFormat(models.Model):
     session_format_id = models.AutoField(primary_key=True)

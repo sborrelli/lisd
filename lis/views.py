@@ -23,13 +23,13 @@ def sessions(request):
             params['error_message'] = "Please enter valid dates"
         else:
             try:
-                if request.POST['librarian'] == '0':
-                    sessions = Session.objects.filter(date__range=(request.POST['from_date'],
+                sessions = Session.objects.filter(date__range=(request.POST['from_date'],
                                                        request.POST['to_date'])).order_by('date')
-                else:
-                    sessions = Session.objects.filter(date__range=(request.POST['from_date'],
-                                                       request.POST['to_date']), librarian=request.POST['librarian']
-                                                      ).order_by('date')                
+                if request.POST['librarian'] != '0':
+                    sessions = sessions.filter(librarian=request.POST['librarian'])
+                if request.POST['session_type'] != '0':
+                    sessions = sessions.filter(session_type=request.POST['session_type'])
+        
                 params['sessions'] = sessions
                 params['queried'] = True
                 for s in sessions:

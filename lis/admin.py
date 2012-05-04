@@ -13,7 +13,8 @@ class SessionAdmin(admin.ModelAdmin):
         (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
                                             'description', 'course', 'section',
                                            'instructor', 'librarian', 'librarians',
-                                           'number_of_users', 'gov_docs']}),
+                                           'number_of_users', 'gov_docs'],
+                                 'description': 'Fields in <b>boldface</b> are required.<br>'}),
         ('Students',            {'fields': ['students'], 'classes': ['collapse']})
     ]    
 
