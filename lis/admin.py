@@ -12,9 +12,10 @@ class SessionAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
                                             'description', 'course', 'section',
-                                           'instructor', 'librarian', 'librarians',
+                                           'instructor', 'librarian', 
                                            'number_of_users', 'gov_docs'],
                                  'description': 'Fields in <b>boldface</b> are required.<br>'}),
+        ('Multiple Librarians',            {'fields': ['librarians'], 'classes': ['collapse']}),
         ('Students',            {'fields': ['students'], 'classes': ['collapse']})
     ]    
 
