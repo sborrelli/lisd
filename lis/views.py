@@ -42,6 +42,7 @@ def sessions(request):
                 params['from_date'] = request.POST['from_date']
                 params['to_date'] = request.POST['to_date']
                 params['librarian'] = request.POST['librarian']
+                params['session_type'] = request.POST['session_type']
             except ValidationError:
                 params['error_message'] = "Please enter valid dates"
         if request.POST['responsetype'] == "excel":                        

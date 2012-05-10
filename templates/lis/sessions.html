@@ -1,78 +1,89 @@
 {% extends "base.html" %}
-{% block content %}   
-<h1>Sessions by date</h1>
+{% block content %}
+<div class="container showgrid">
+	<div class="span-24 last">   
+		<h1>Sessions by date</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-{{ posted }}
-<form action="{% url lis.views.sessions %}" method="post">
-{% csrf_token %}
-<label for="from_date">From: </label>
-<input type="text" name="from_date" id="from_date" value="{{ from_date }}" />
-<label for="to_date">To: </label>
-<input type="text" name="to_date" id="to_date"  value="{{ to_date }}" />
-<input type="hidden" name="responsetype" value="html" />
-<label for="librarian">Librarian: </label>
-<select name="librarian">
-<option value="0">All</option>
-{% for lib in librarians %}
-	<option value="{{ lib.librarian_id }}" {% if lib.librarian_id == librarian %} selected="selected" {% endif %}>
-	{{ lib }}
-	</option>
-{% endfor %}
-</select>
-<label for="session_type">Type: </label>
-<select name="session_type" title="Session Type">
-<option value="0">All</option>
-{% for ses_type in session_types %}
-	<option value="{{ ses_type.session_type_id }}">
-	{{ ses_type }}
-	</option>
-{% endfor %}
-</select>
-<input type="submit" value="Search" />
-</form>
-<hr>
-{% if queried %}	
-	{% if sessions %}
-	<div id="tablecontent" style="position: relative">
-		<div style="float: left; width: 50%">
-			<table border="1" cellpadding="2">
-			<tr>
-			<th>Sessions held between </th><th>{{ from_date }}</th><th></th><th>and</th><th>{{ to_date }}</th><th></th>			
-			</tr>
-			<tr>			
-			<th>Date</th><th>Type</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
-			</tr>		
-				{% for ses in sessions %}
-				<tr>
-					<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
-					<td>{{ses.session_type}} </td>
-					<td>{{ses.librarian}}</td>
-					<td>{{ses.number_of_users}}</td>
-					<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
-					<td>{% if ses.course %} {{ses.students.count}} {% endif %}</td>
-				</tr>	
-				{% endfor %}
-				<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
-			</table>
-		</div>
-		<div style="float: left; position: absolute; bottom:32px; left: 52%">
-			<form id="excelform" action="{% url lis.views.sessions %}" method="post">
-				{% csrf_token %}
-				<input type="hidden" name="from_date" value="{{ from_date }}" />
-				<input type="hidden" name="to_date" value="{{ to_date }}" />
-				<input type="hidden" name="librarian" value="{{ librarian }}" />
-				<input type="hidden" name="responsetype" value="excel" />					
-				<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
-				<img src="/static/excel.jpg" width="32" height="32"/>
-				</a>
-			</form>
-		</div>	
-		<div style="clear: both">
-		<div class="info">Unique students reached: {{totalunique}}</div>
-	</div>	
-	{% else %}
-		<p>No sessions found.</p>
-	{% endif %}
-{% endif %}
+		{% if error_message %}<div class="error">{{ error_message }}</div>{% endif %}
+		{{ posted }}
+		<script>
+			$(function() {
+				$( "#from_date" ).datepicker(datePickerOptions);
+				$( "#to_date" ).datepicker(datePickerOptions);
+			});
+		</script>
+		<form action="{% url lis.views.sessions %}" method="post">
+		{% csrf_token %}
+		<label for="from_date">From: </label>
+		<input type="text" name="from_date" id="from_date" value="{{ from_date }}" />
+		<label for="to_date">To: </label>
+		<input type="text" name="to_date" id="to_date"  value="{{ to_date }}" />
+		<input type="hidden" name="responsetype" value="html" />
+		<label for="librarian">Librarian: </label>
+		<select name="librarian">
+		<option value="0">All</option>
+		{% for lib in librarians %}
+			<option value="{{ lib.librarian_id }}" {% if lib.librarian_id == librarian %} selected="selected" {% endif %}>
+			{{ lib }}
+			</option>
+		{% endfor %}
+		</select>
+		<label for="session_type">Type: </label>
+		<select name="session_type" title="Session Type">
+		<option value="0">All</option>
+		{% for ses_type in session_types %}
+			<option value="{{ ses_type.session_type_id }}">
+			{{ ses_type }}
+			</option>
+		{% endfor %}
+		</select>
+		<input type="submit" value="Search" />
+		</form>
+		<hr>
+		{% if queried %}	
+			{% if sessions %}
+			<div id="tablecontent" style="position: relative">
+				<div style="float: left; width: 50%">
+					<table border="1" cellpadding="2">
+					<tr>
+					<th>Sessions held between </th><th>{{ from_date }}</th><th></th><th>and</th><th>{{ to_date }}</th><th></th>			
+					</tr>
+					<tr>			
+					<th>Date</th><th>Type</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
+					</tr>		
+						{% for ses in sessions %}
+						<tr>
+							<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
+							<td>{{ses.session_type}} </td>
+							<td>{{ses.librarian}}</td>
+							<td>{{ses.number_of_users}}</td>
+							<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
+							<td>{% if ses.course %} {{ses.students.count}} {% endif %}</td>
+						</tr>	
+						{% endfor %}
+						<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+					</table>
+				</div>
+				<div style="float: left; position: absolute; bottom:32px; left: 52%">
+					<form id="excelform" action="{% url lis.views.sessions %}" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="from_date" value="{{ from_date }}" />
+						<input type="hidden" name="to_date" value="{{ to_date }}" />
+						<input type="hidden" name="librarian" value="{{ librarian }}" />
+						<input type="hidden" name="session_type" value="{{ session_type }}" />
+						<input type="hidden" name="responsetype" value="excel" />					
+						<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
+						<img src="/static/excel.jpg" width="32" height="32"/>
+						</a>
+					</form>
+				</div>	
+				<div style="clear: both">
+				<div class="info">Unique students reached: {{totalunique}}</div>
+			</div>	
+			{% else %}
+				<p>No sessions found.</p>
+			{% endif %}
+		{% endif %}
+	</div>
+</div>	
 {% endblock %}  

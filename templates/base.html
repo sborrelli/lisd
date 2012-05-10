@@ -2,6 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE|default:"en-us" }}" xml:lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/static/css/blueprint/print.css" type="text/css" media="print">
+<!--[if lt IE 8]>
+	<link rel="stylesheet" href="/static/css/blueprint/ie.css" type="text/css" media="screen, projection">
+<![endif]-->
+<link type="text/css" href="/static/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+<link type="text/css" href="/static/css/ui-lightness/jquery-ui-1.8.20.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="/static/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-ui-1.8.20.custom.min.js"></script>
+<script type="text/javascript">
+	var datePickerOptions = { changeYear: true, changeMonth: true, 
+			autoSize: true, dateFormat: "yy-mm-dd" }
+</script>
 </head>
 {% load i18n %}
 

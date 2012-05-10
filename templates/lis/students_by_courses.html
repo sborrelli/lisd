@@ -1,64 +1,74 @@
 {% extends "base.html" %}
 {% block content %}   
-<h1>Students in courses</h1>
+<div class="container showgrid">
+	<div class="span-24 last">
+		<h1>Students in courses</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-{{ posted }}
-<form action="/students_by_courses/" method="post">
-{% csrf_token %}
-<label for="courses">Select one or more courses and a date range</label><br>
-<select multiple="multiple" name="courses" id="courses" size="10">
-	{% for course in courses %}
-	<option value="{{course.course_id}}">{{course.full_name}}</option>
-	{% endfor %}
-</select>
-<br />
-<label for="from_date">From: </label>
-<input type="text" name="from_date" id="from_date" value="{{ from_date }}" />
-<label for="to_date">To: </label>
-<input type="text" name="to_date" id="to_date"  value="{{ to_date }}" />
-<input type="hidden" name="responsetype" value="html" />
-<input type="submit" value="Submit" />
-</form>
-<hr>
-
-{% if queried %}	
-	{% if students %}
-	<div id="tablecontent" style="position: relative">
-	<div>
-		<table border="1" cellpadding="2">
-		<tr>
-		<th></th><th>Students in {{ sel_courses }}</th>
-		</tr>
-		<tr>
-		<th></th><th>between {{ from_date }} and {{ to_date }}</th>
-		</tr>
-		<tr>
-		<th></th><th>WSU ID</th>
-		</tr>		
-			{% for stu in students %}
-			<tr>
-				<td>{{forloop.counter}}</td>
-				<td> <a href="/admin/lis/student/{{stu.student_id}}/">{{stu.wsu_id}}</a></td> 			
-			</tr>	
+		{% if error_message %}<div class="error">{{ error_message }}</div>{% endif %}
+		{{ posted }}
+		<script>
+			$(function() {
+				$( "#from_date" ).datepicker(datePickerOptions);
+				$( "#to_date" ).datepicker(datePickerOptions);
+			});
+		</script>
+		<form action="/students_by_courses/" method="post">
+		{% csrf_token %}
+		<label for="courses">Select one or more courses and a date range</label><br>
+		<select multiple="multiple" name="courses" id="courses" size="10">
+			{% for course in courses %}
+			<option value="{{course.course_id}}">{{course.full_name}}</option>
 			{% endfor %}
-		</table>
-	</div>
-	<div>
-		<form id="excelform" action="/students_by_courses/" method="post">
-				{% csrf_token %}
-				<input type="hidden" name="courses_list" value="{{ courses_list }}" />				
-				<input type="hidden" name="responsetype" value="excel" />
-				<input type="hidden" name="from_date" value="{{ from_date }}" />
-				<input type="hidden" name="to_date" value="{{ to_date }}" />
-				<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
-				<img src="/static/excel.jpg" width="32" height="32"/>
-				</a>
+		</select>
+		<br />
+		<label for="from_date">From: </label>
+		<input type="text" name="from_date" id="from_date" value="{{ from_date }}" />
+		<label for="to_date">To: </label>
+		<input type="text" name="to_date" id="to_date"  value="{{ to_date }}" />
+		<input type="hidden" name="responsetype" value="html" />
+		<input type="submit" value="Submit" />
 		</form>
-		</div>
-	</div>	
-	{% else %}
-		<p>No students found.</p>
-	{% endif %}
-{% endif %}
+		<hr>
+
+		{% if queried %}	
+			{% if students %}
+			<div id="tablecontent" style="position: relative">
+			<div>
+				<table border="1" cellpadding="2">
+				<tr>
+				<th></th><th>Students in {{ sel_courses }}</th>
+				</tr>
+				<tr>
+				<th></th><th>between {{ from_date }} and {{ to_date }}</th>
+				</tr>
+				<tr>
+				<th></th><th>WSU ID</th>
+				</tr>		
+					{% for stu in students %}
+					<tr>
+						<td>{{forloop.counter}}</td>
+						<td> <a href="/admin/lis/student/{{stu.student_id}}/">{{stu.wsu_id}}</a></td> 			
+					</tr>	
+					{% endfor %}
+				</table>
+			</div>
+			<div>
+				<form id="excelform" action="/students_by_courses/" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="courses_list" value="{{ courses_list }}" />				
+						<input type="hidden" name="responsetype" value="excel" />
+						<input type="hidden" name="from_date" value="{{ from_date }}" />
+						<input type="hidden" name="to_date" value="{{ to_date }}" />
+						<a href="#" onclick="document.getElementById('excelform').submit()" title="Export results to Excel file">
+						<img src="/static/excel.jpg" width="32" height="32"/>
+						</a>
+				</form>
+				</div>
+			</div>	
+			{% else %}
+				<p>No students found.</p>
+			{% endif %}
+		{% endif %}
+	</div>
+</div>
 {% endblock %}  
