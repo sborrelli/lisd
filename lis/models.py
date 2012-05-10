@@ -3,6 +3,47 @@
 from django.db import models
 import datetime
 
+## Auxiliary methods used in models.py ##
+
+def typedefault():
+    t = SessionType.objects.filter(name='Course Related Instruction')
+    if t:
+        return t[0].session_type_id
+    return
+
+def formatdefault():
+    f = SessionFormat.objects.filter(format_name='In Person')
+    if f:
+        return f[0].session_format_id
+    return
+
+def campusdefault():
+    loc = Location.objects.filter(name__contains='Pullman')
+    if loc:
+        return loc[0].location_id
+    return
+
+def termdefault():
+    term = ""
+    today = datetime.date.today()
+    SPRING_START = datetime.date(today.year, 1, 1)
+    SPRING_END = datetime.date(today.year, 5, 10)
+    SUMMER_START = datetime.date(today.year, 5, 11)
+    SUMMER_END = datetime.date(today.year, 8, 20)
+    FALL_START = datetime.date(today.year, 8, 21)
+    FALL_END = datetime.date(today.year, 12, 31)    
+    term = str(today.year)
+    if SPRING_START <= today <= SPRING_END:
+        term = "Spring " + term
+    elif SUMMER_START <= today <= SUMMER_END:
+        term = "Summer " + term
+    elif FALL_START <= today <= FALL_END:
+        term = "Fall " + term
+    return term
+
+
+## Data models ##
+
 ##class AcademicField(models.Model):
 ##    abbreviation = models.CharField(max_length=20,
 ##                    help_text='''Please use official departmental abbreviations <br>
@@ -60,42 +101,6 @@ class SessionType(models.Model):
     class Meta:
         db_table = u'lis_session_types'
 
-def typedefault():
-    t = SessionType.objects.filter(name='Course Related Instruction')
-    if t:
-        return t[0].session_type_id
-    return
-
-def formatdefault():
-    f = SessionFormat.objects.filter(format_name='In Person')
-    if f:
-        return f[0].session_format_id
-    return
-
-def campusdefault():
-    loc = Location.objects.filter(name__contains='Pullman')
-    if loc:
-        return loc[0].location_id
-    return
-
-def termdefault():
-    term = ""
-    today = datetime.date.today()
-    SPRING_START = datetime.date(today.year, 1, 1)
-    SPRING_END = datetime.date(today.year, 5, 10)
-    SUMMER_START = datetime.date(today.year, 5, 11)
-    SUMMER_END = datetime.date(today.year, 8, 20)
-    FALL_START = datetime.date(today.year, 8, 21)
-    FALL_END = datetime.date(today.year, 12, 31)    
-    term = str(today.year)
-    if SPRING_START <= today <= SPRING_END:
-        term = "Spring " + term
-    elif SUMMER_START <= today <= SUMMER_END:
-        term = "Summer " + term
-    elif FALL_START <= today <= FALL_END:
-        term = "Fall " + term
-    return term
-
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True,
@@ -124,8 +129,7 @@ class Session(models.Model):
     academic_term = models.CharField(max_length=20, blank=True,
                     help_text='''Enter term and year e.g. Fall 2012.<br>
                     Leave blank for automatic calculation based on
-                    the session date.''',
-                    default=termdefault)
+                    the session date.''')
     instructor = models.CharField(max_length=40, blank=True, null=True,
                         help_text="<em>Last, First</em> if known, otherwise just last name")
     students = models.ManyToManyField("Student", blank=True)
@@ -173,7 +177,4 @@ class StudentSnapshot(models.Model):
     address_business_act_code = models.CharField(max_length=10, blank=True)
     class Meta:
         db_table = u'lis_student_snapshots'
-
-
-
 
