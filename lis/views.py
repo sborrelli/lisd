@@ -38,7 +38,7 @@ def sessions(request):
                         totalunique.extend(s.students.all())
                 params['total'] = total
                 params['totalunique'] = len(set(totalunique))
-                #reset the POST parameters to show them again
+                #re-set the POST parameters to show them again
                 params['from_date'] = request.POST['from_date']
                 params['to_date'] = request.POST['to_date']
                 params['librarian'] = request.POST['librarian']
@@ -59,32 +59,47 @@ def students_by_courses(request):
     params = dict()
     courses = Course.objects.all()
     params['courses'] = courses
-    students = []
+    students = [] #list of lists of students
     if request.POST:
-        params['queried'] = True
-        studs = []
-        if request.POST['responsetype'] == 'excel':
-            selected_ids = request.POST['courses_list'].split('-')
-        else:
-            selected_ids = request.POST.getlist('courses')
-        selected_courses = [ c for c in courses if str(c.course_id) in selected_ids ]
-        params['sel_courses'] = ", ".join([ n.full_name() for n in selected_courses ])
-        for cid in selected_ids:            
-            c = Course.objects.get(pk=int(cid))
-            studs.append(c.students.all())
-        if len(studs) > 0:
-            students = studs[0]            
-        for i in range(1, len(studs)):
-            #inter = set(students).intersection(studs[i])
-            inter = [ x for x in students if x in studs[i] ]
-            #students = list(inter)
-            students = inter
-        params['students'] = students
-        params['courses_list'] = "-".join(selected_ids)
-        if request.POST['responsetype'] == "excel":                        
-            htmlstring = render_to_string('lis/students_by_courses.html', params,
-                              context_instance=RequestContext(request))
-            return table_to_excel(request, htmlstring, "Students by courses")
+        if not (request.POST['from_date'] and request.POST['to_date']):
+            params['error_message'] = "Please enter valid dates"
+        else:    
+            params['queried'] = True
+            studs = []
+            if request.POST['responsetype'] == 'excel':
+                selected_ids = request.POST['courses_list'].split('-')
+            else:
+                selected_ids = request.POST.getlist('courses')
+            selected_courses = [ c for c in courses if str(c.course_id) in selected_ids ]
+            params['sel_courses'] = ", ".join([ n.full_name() for n in selected_courses ])
+            for cid in selected_ids:            
+                c = Course.objects.get(pk=int(cid))
+                #for every course, get the list of sessions that are related to it. Students are related to these sessions
+                sessions = Session.objects.filter(course=c, date__range=(request.POST['from_date'],
+                                                           request.POST['to_date']))
+                if sessions:
+                    ses_students = set() #single set for all students of this course 
+                    for ses in sessions:
+                        ses_students.update(ses.students.all())                
+                    if ses_students:
+                        #convert set to list before appending 
+                        studs.append(list(ses_students))
+            if len(studs) > 0:
+                students = studs[0]            
+            for i in range(1, len(studs)):
+                #inter = set(students).intersection(studs[i])
+                inter = [ x for x in students if x in studs[i] ]
+                #students = list(inter)
+                students = inter
+            params['students'] = students
+            params['courses_list'] = "-".join(selected_ids)
+            #re-set the POST parameters to show them again
+            params['from_date'] = request.POST['from_date']
+            params['to_date'] = request.POST['to_date']
+            if request.POST['responsetype'] == "excel":                        
+                htmlstring = render_to_string('lis/students_by_courses.html', params,
+                                  context_instance=RequestContext(request))
+                return table_to_excel(request, htmlstring, "Students by courses")
     else:        
         params['queried'] = False        
     return render_to_response('lis/students_by_courses.html', params,

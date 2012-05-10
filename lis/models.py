@@ -1,13 +1,26 @@
 # This is an auto-generated Django model module.
 
 from django.db import models
+import datetime
+
+##class AcademicField(models.Model):
+##    abbreviation = models.CharField(max_length=20,
+##                    help_text='''Please use official departmental abbreviations <br>
+##                    (e.g. English = ENGL, Chemistry = CHEM).<br>See schedule of
+##                    classes for official abbreviations''')
+##    name = models.CharField(max_length=200)
+##    class Meta:
+##        db_table = u'lis_academic_fields'
+##    def __unicode__(self):
+##        return u'%s - %s' % (self.abbreviation, self.name)
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
+    #academic_field = models.ForeignKey(AcademicField)
     academic_field = models.CharField(max_length=20,
-        help_text='''Please use official departmental abbreviations <br>
-(e.g. English = ENGL, Chemistry = CHEM).<br>See schedule of classes
-for official abbreviations''')
+                    help_text='''Please use official departmental abbreviations <br>
+                    (e.g. English = ENGL, Chemistry = CHEM).<br>See schedule of
+                    classes for official abbreviations''')
     academic_course_number = models.CharField(max_length=10)
     description = models.CharField(null=True, blank=True, max_length=200)    
     academic_location = models.ForeignKey("Location", null=True, blank=True)    
@@ -59,6 +72,30 @@ def formatdefault():
         return f[0].session_format_id
     return
 
+def campusdefault():
+    loc = Location.objects.filter(name__contains='Pullman')
+    if loc:
+        return loc[0].location_id
+    return
+
+def termdefault():
+    term = ""
+    today = datetime.date.today()
+    SPRING_START = datetime.date(today.year, 1, 1)
+    SPRING_END = datetime.date(today.year, 5, 10)
+    SUMMER_START = datetime.date(today.year, 5, 11)
+    SUMMER_END = datetime.date(today.year, 8, 20)
+    FALL_START = datetime.date(today.year, 8, 21)
+    FALL_END = datetime.date(today.year, 12, 31)    
+    term = str(today.year)
+    if SPRING_START <= today <= SPRING_END:
+        term = "Spring " + term
+    elif SUMMER_START <= today <= SUMMER_END:
+        term = "Summer " + term
+    elif FALL_START <= today <= FALL_END:
+        term = "Fall " + term
+    return term
+
 class Session(models.Model):
     session_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True,
@@ -79,13 +116,16 @@ class Session(models.Model):
     gov_docs = models.BooleanField('Government Docs',blank=True)
     session_format = models.ForeignKey("SessionFormat", null=True, default=formatdefault)
     #course information
-    campus = models.ForeignKey("Location", null=True, blank=True)
+    campus = models.ForeignKey("Location", null=True, blank=True, default=campusdefault)
     course = models.ForeignKey(Course, null=True, blank=True)
-    SECTIONS = tuple ( [ (str(i),str(i)) for i in range(1,21) ] )
+    SECTIONS = tuple ( [ (str(i),str(i)) for i in range(1,81) ] )
     section = models.CharField(max_length=20, null=True, blank=True,
                                choices=SECTIONS)
     academic_term = models.CharField(max_length=20, blank=True,
-                    help_text="Enter term and year e.g. Fall 2012.")
+                    help_text='''Enter term and year e.g. Fall 2012.<br>
+                    Leave blank for automatic calculation based on
+                    the session date.''',
+                    default=termdefault)
     instructor = models.CharField(max_length=40, blank=True, null=True,
                         help_text="<em>Last, First</em> if known, otherwise just last name")
     students = models.ManyToManyField("Student", blank=True)
@@ -106,7 +146,7 @@ class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     last_name = models.CharField(null=True, max_length=40, blank=True)
     first_name = models.CharField(null=True, max_length=40, blank=True)
-    wsu_id = models.IntegerField(unique=True)
+    wsu_id = models.IntegerField("WSU ID", unique=True)
     network_id = models.CharField(max_length=40, blank=True)
     def __unicode__(self):        
         if self.first_name and self.last_name:            
