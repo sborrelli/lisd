@@ -12,7 +12,7 @@
 				$( "#to_date" ).datepicker(datePickerOptions);
 			});
 		</script>
-		<form action="/students_by_courses/" method="post">
+		<form action="{% url lis.views.students_by_courses %}" method="post">
 		{% csrf_token %}
 		<label for="courses">Select one or more courses and a date range</label><br>
 		<select multiple="multiple" name="courses" id="courses" size="10">
@@ -53,7 +53,7 @@
 				</table>
 			</div>
 			<div>
-				<form id="excelform" action="/students_by_courses/" method="post">
+				<form id="excelform" action="{% url lis.views.students_by_courses %}" method="post">
 						{% csrf_token %}
 						<input type="hidden" name="courses_list" value="{{ courses_list }}" />				
 						<input type="hidden" name="responsetype" value="excel" />
