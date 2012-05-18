@@ -1,6 +1,7 @@
 from lis.models import *
 from django.contrib import admin
 from django.forms import TextInput
+from lis.forms import SessionAdminForm
 import datetime
 
 class CourseAdmin(admin.ModelAdmin):
@@ -30,6 +31,7 @@ def calculate_term(date):
     return term
 
 class SessionAdmin(admin.ModelAdmin):
+    form = SessionAdminForm
     fieldsets = [
         (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
                                             'description', 'course', 'section',
@@ -37,17 +39,28 @@ class SessionAdmin(admin.ModelAdmin):
                                            'number_of_users', 'gov_docs'],
                                  'description': 'Fields in <b>boldface</b> are required.<br>'}),
         ('Multiple Librarians',            {'fields': ['librarians'], 'classes': ['collapse']}),
-        ('Students',            {'fields': ['students'], 'classes': ['collapse']})
+        ('Students',            {'fields': [('students_list','clear_existing'),'students'], 'classes': ['collapse']})
     ]    
 
     list_display = ('date', 'session_type', 'librarian', 'course')
 
     list_filter = ['date', 'session_type', 'librarian']
 
-    def save_model(self, request, obj, form, change):
+    filter_horizontal = ('librarians','students')
+
+    readonly_fields = ('students',)
+
+    def save_model(self, request, obj, form, change):        
+        if form.is_valid() and form.cleaned_data['clear_existing']:
+            obj.students.clear()
         if not len(obj.academic_term) > 0:
-            obj.academic_term = calculate_term(obj.date)
-        obj.save()
+            obj.academic_term = calculate_term(obj.date)        
+        obj.save()        
+        #if there is a students file upload, process it        
+        csv_file = request.FILES.get('students_list',None)        
+        if csv_file:
+            #form.add_students(obj, csv_file)
+            import_students(obj, csv_file)            
 
 admin.site.register(Session, SessionAdmin)
 
@@ -60,6 +73,62 @@ class StudentAdmin(admin.ModelAdmin):
         models.IntegerField: {'widget': TextInput(attrs={'size':'10'})},
         }
     #fields = ['first_name', 'last_name', 'wsu_id', 'network_id']
+    filter_vertical = ('sessions',)
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Location)
+
+def import_students(session, csv_file):
+    '''Receives a csv file with student ids and links them students
+        to a session'''
+    import csv
+    #create a list of IDs from csv file
+    student_ids = []
+    id_reader = csv.reader(csv_file)
+    for row in id_reader:
+        student_ids.append(row)
+    #get or create students in database    
+    dbstudents = []    
+    for row in student_ids:
+        student_id = row[0] #only interested in the first element, wsu_id
+        try:
+            idnumber = int(student_id)
+        except ValueError:
+            continue
+        try:
+            
+            dbstudent = Student.objects.get(wsu_id=idnumber)
+            dbstudents.append(dbstudent)
+        except Student.DoesNotExist:
+            #create new student
+            student = Student(wsu_id=int(student_id))
+            student.save()
+            dbstudents.append(student)                    
+    #assign students to session
+    for student in dbstudents:        
+        session.students.add(student)
+
+##def add_students_to_session(session, student_ids):
+##    '''Links a bunch of students to a session. If the students are not
+##    yet in DB, it creates them first.
+##    @param students: list of WSU IDs
+##    @param session: library instruction session instance'''
+##    dbstudents = []    
+##    #if students don't exist, create them
+##    for row in student_ids:
+##        student_id = row[0] #only interested in the first element, wsu_id
+##        try:
+##            dbstudent = Student.objects.get(wsu_id=int(student_id))
+##            dbstudents.append(dbstudent)
+##        except Student.DoesNotExist:
+##            #create new student
+##            student = Student(wsu_id=int(student_id))
+##            student.save()
+##            dbstudents.append(student)                    
+##    #assign students to session
+##    for student in dbstudents:        
+##        session.students.add(student)
+        
+
+   
+ 

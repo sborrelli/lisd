@@ -2,6 +2,7 @@
 
 from django.db import models
 import datetime
+from django.db.models.signals import post_save
 
 ## Auxiliary methods used in models.py ##
 
@@ -132,9 +133,14 @@ class Session(models.Model):
                     the session date.''')
     instructor = models.CharField(max_length=40, blank=True, null=True,
                         help_text="<em>Last, First</em> if known, otherwise just last name")
-    students = models.ManyToManyField("Student", blank=True)
+    students = models.ManyToManyField("Student", blank=True,
+                                      db_table=u'lis_sessions_students')
+    #student_ids = models.CharField(max_length=4000, null=True)
     def __unicode__(self):
-        return u'%s - %s' % (self.date, self.session_type)
+        if self.description.strip():
+            return u'%s - %s by %s' % (self.date, self.description, self.librarian)
+        else:
+            return u'%s - %s by %s' % (self.date, self.session_type, self.librarian)
     class Meta:
         db_table = u'lis_sessions'
 
@@ -152,6 +158,8 @@ class Student(models.Model):
     first_name = models.CharField(null=True, max_length=40, blank=True)
     wsu_id = models.IntegerField("WSU ID", unique=True)
     network_id = models.CharField(max_length=40, blank=True)
+    sessions = models.ManyToManyField(Session, blank=True,
+                                      db_table=Session.students.field.db_table,)
     def __unicode__(self):        
         if self.first_name and self.last_name:            
             return u'%s %s' % (self.first_name, self.last_name)
@@ -178,3 +186,10 @@ class StudentSnapshot(models.Model):
     class Meta:
         db_table = u'lis_student_snapshots'
 
+def add_students_to_session(sender, **kwargs):
+    '''callback function to add students to a session after saving'''
+    session = kwargs.get('instance')    
+    #s = Student.objects.get(wsu_id=4868299)    
+    session.students.add(s)
+
+#post_save.connect(add_students_to_session, sender=Session)
