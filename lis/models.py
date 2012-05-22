@@ -133,7 +133,7 @@ class Session(models.Model):
                     help_text='''Enter term and year e.g. Fall 2012.<br>
                     Leave blank for automatic calculation based on
                     the session date.''')
-    instructor = models.CharField(max_length=40, blank=True, null=True,
+    instructor = models.CharField("Course Instructor", max_length=40, blank=True, null=True,
                         help_text="<em>Last, First</em> if known, otherwise just last name")
     students = models.ManyToManyField("Student", blank=True,
                                       db_table=u'lis_sessions_students')

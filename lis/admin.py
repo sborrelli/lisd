@@ -34,15 +34,15 @@ class SessionAdmin(admin.ModelAdmin):
     form = SessionAdminForm
     fieldsets = [
         (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
-                                            'description', 'course', 'section',
-                                           'instructor', 'librarian', 
+                                            'description', 'librarian', 'course', 'section',
+                                           'instructor', 
                                            'number_of_users', 'gov_docs'],
                                  'description': 'Fields in <b>boldface</b> are required.<br>'}),
         ('Multiple Librarians',            {'fields': ['librarians'], 'classes': ['collapse']}),
         ('Students',            {'fields': [('students_list','clear_existing'),'students'], 'classes': ['collapse']})
     ]    
 
-    list_display = ('date', 'session_type', 'librarian', 'course')
+    list_display = ('date', 'session_type', 'description', 'librarian', 'course')
 
     list_filter = ['date', 'session_type', 'librarian']
 
@@ -51,8 +51,10 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ('students',)
 
     def save_model(self, request, obj, form, change):        
-        if form.is_valid() and form.cleaned_data['clear_existing']:
+        if form.is_valid() and form.cleaned_data['clear_existing']:            
             obj.students.clear()
+        #studs = form.cleaned_data['students']
+        #studs.clear()
         if not len(obj.academic_term) > 0:
             obj.academic_term = calculate_term(obj.date)        
         obj.save()        

@@ -43,28 +43,34 @@
 		{% if queried %}	
 			{% if sessions %}
 			<div id="tablecontent" style="position: relative">
-				<div style="float: left; width: 50%">
+				<div style="float: left; width: 80%">
 					<table border="1" cellpadding="2">
-					<tr>
-					<th>Sessions held between </th><th>{{ from_date }}</th><th></th><th>and</th><th>{{ to_date }}</th><th></th>			
-					</tr>
-					<tr>			
-					<th>Date</th><th>Type</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
-					</tr>		
-						{% for ses in sessions %}
-						<tr>
-							<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
-							<td>{{ses.session_type}} </td>
-							<td>{{ses.librarian}}</td>
-							<td>{{ses.number_of_users}}</td>
-							<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
-							<td>{% if ses.course %} {{ses.students.count}} {% endif %}</td>
-						</tr>	
-						{% endfor %}
-						<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+						<thead>
+							<tr>
+							<th>Sessions held between </th><th>{{ from_date }}</th><th>and</th><th>{{ to_date }}</th>
+							<th></th><th></th><th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>			
+							<th>Date</th><th>Type</th><th>Description</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
+							</tr>						
+							{% for ses in sessions %}
+							<tr>
+								<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
+								<td>{{ses.session_type}} </td>
+								<td>{{ses.description}} </td>
+								<td>{{ses.librarian}}</td>
+								<td>{{ses.number_of_users}}</td>
+								<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
+								<td>{% if ses.course %} {{ses.students.count}} {% endif %}</td>
+							</tr>	
+							{% endfor %}
+							<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+						</tbody>	
 					</table>
 				</div>
-				<div style="float: left; position: absolute; bottom:32px; left: 52%">
+				<div style="float: left; position: absolute; bottom:32px; left: 82%">
 					<form id="excelform" action="{% url lis.views.sessions %}" method="post">
 						{% csrf_token %}
 						<input type="hidden" name="from_date" value="{{ from_date }}" />
