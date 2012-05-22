@@ -20,3 +20,6 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     'C:/django/library_value/templates',
 )
+
+def globalstuff(request):
+    return {"home_url" : "/"}
