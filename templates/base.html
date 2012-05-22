@@ -19,12 +19,15 @@
 {% load i18n %}
 
 <body>
-
+{% block header %}
+<div class="container"> 
+	<div class="span-24 info">
+		<a href="{{ home_url }}" title="Back to main menu">Main Page</a>
+	</div>
+</div>
+{% endblock %}
 <!-- Container -->
-<div id="container">    
-
-	{% block header %}<div id="header"></div>{% endblock %}
-
+<div id="container">  
     <!-- Content -->
     <div id="content" class="">        
         {% block content %}   
