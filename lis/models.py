@@ -67,7 +67,9 @@ class Course(models.Model):
     description = models.CharField(null=True, blank=True, max_length=200)    
     academic_location = models.ForeignKey("Location", null=True, blank=True)    
     def full_name(self):
-        return u'%s %s' % (self.academic_field, self.academic_course_number)
+        return u'%s %s - %s' % (self.academic_field,
+                                self.academic_course_number,
+                                self.academic_location)
     def __unicode__(self):
         return self.full_name()
     class Meta:
