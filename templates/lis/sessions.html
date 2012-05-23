@@ -51,26 +51,35 @@ List of Sessions by date
 					<table border="1" cellpadding="2">
 						<thead>
 							<tr>
-							<th>Sessions held between </th><th>{{ from_date }}</th><th>and</th><th>{{ to_date }}</th>
-							<th></th><th></th><th></th>
+							<th>Sessions</th><th>held</th><th>between </th><th nowrap="nowrap">{{ from_date }}</th>
+							<th>and</th><th nowrap="nowrap">{{ to_date }}</th>
+							<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>			
-							<th>Date</th><th>Type</th><th>Description</th><th>Librarian</th><th># of Users</th><th>Course</th><th>Students</th>
+							<th>Date</th><th>Type</th><th>Description</th>
+							<th>Librarian</th>
+							<th># of Users Reported</th>
+							<th>Course</th><th># of Students Enrolled</th>
 							</tr>						
 							{% for ses in sessions %}
 							<tr>
-								<td> <a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a></td> 
-								<td>{{ses.session_type}} </td>
-								<td>{{ses.description}} </td>
-								<td>{{ses.librarian}}</td>
-								<td>{{ses.number_of_users}}</td>
-								<td>{% if ses.course %} {{ses.course.full_name}} {% endif %}</td>
-								<td>{% if ses.course %} {{ses.students.count}} {% endif %}</td>
+								<td nowrap="nowrap"> 
+									<a href="/admin/lis/session/{{ses.session_id}}/">{{ses.date}}</a>
+								</td> 
+								<td>{{ ses.session_type }} </td>
+								<td>{{ ses.description }} </td>
+								<td nowrap="nowrap">{{ses.librarian}}</td>
+								<td>{% if ses.number_of_users %} {{ ses.number_of_users }} {% endif %}</td>
+								<td>{% if ses.course %} {{ ses.course.full_name }} {% endif %}</td>
+								<td>{% if ses.course %} {{ ses.students.count }} {% endif %}</td>
 							</tr>	
 							{% endfor %}
-							<tr><td></td><td></td><td></td><td></td><th>Total</th><td>{{total}}</td></tr>
+							<tr>
+								<td></td><td></td><td></td><th>Total users:</th><td>{{ total_users }}</td>
+								<th>Total students:</th><td>{{ total_students }}</td>
+							</tr>
 						</tbody>	
 					</table>
 				</div>

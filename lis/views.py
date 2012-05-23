@@ -13,7 +13,8 @@ def courses(request):
 
 def sessions(request):
     params = dict()
-    total = 0
+    total_students = 0
+    total_users = 0
     totalunique = []
     #retrieve lists of librarians and ses types
     params['librarians'] = Librarian.objects.order_by('last_name')
@@ -33,11 +34,14 @@ def sessions(request):
                 params['sessions'] = sessions
                 params['queried'] = True
                 for s in sessions:
+                    if s.number_of_users:
+                        total_users += s.number_of_users
                     if s.course:
-                        total += s.students.count()
+                        total_students += s.students.count()                        
                         totalunique.extend(s.students.all())
-                params['total'] = total
-                params['totalunique'] = len(set(totalunique))
+                params['total_students'] = total_students
+                params['total_users'] = total_users
+                params['totalunique'] = len(set(totalunique)) #convert to set to get number of unique students
                 #re-set the POST parameters to show them again
                 params['from_date'] = request.POST['from_date']
                 params['to_date'] = request.POST['to_date']
