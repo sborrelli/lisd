@@ -2,6 +2,7 @@ from lis.models import *
 from django.contrib import admin
 from django.forms import TextInput
 from lis.forms import SessionAdminForm
+from django.db.models import Sum, Q
 import datetime
 
 class CourseAdmin(admin.ModelAdmin):
@@ -42,7 +43,8 @@ class SessionAdmin(admin.ModelAdmin):
         ('Students',            {'fields': [('students_list','clear_existing'),'students'], 'classes': ['collapse']})
     ]    
 
-    list_display = ('date', 'session_type', 'description', 'librarian', 'course')
+    list_display = ('date', 'session_type', 'description',
+                    'number_of_users','librarian', 'course')
 
     list_filter = ['date', 'session_type', 'librarian']
 
@@ -62,7 +64,20 @@ class SessionAdmin(admin.ModelAdmin):
         csv_file = request.FILES.get('students_list',None)        
         if csv_file:
             #form.add_students(obj, csv_file)
-            import_students(obj, csv_file)            
+            import_students(obj, csv_file)
+
+    def changelist_view(self, request, extra_context=None):        
+        qs = self.queryset(request)
+        for k,v in request.GET.items():
+            q = Q(**{k: v}) #looks magic? see http://stackoverflow.com/questions/5092336/a-better-way-than-eval-when-translating-keyword-arguments-in-querysets-python            
+            qs = qs.filter(q)
+        total_users = qs.aggregate(Sum('number_of_users'))
+        print "totales:", total_users
+        my_context = {
+            'total_users': total_users['number_of_users__sum'],
+        }
+        return super(SessionAdmin, self).changelist_view(request,
+            extra_context=my_context)
 
 admin.site.register(Session, SessionAdmin)
 
