@@ -64,7 +64,8 @@ class Course(models.Model):
                     (e.g. English = ENGL, Chemistry = CHEM).<br>See schedule of
                     classes for official abbreviations''')
     academic_course_number = models.CharField(max_length=10)
-    description = models.CharField(null=True, blank=True, max_length=200)    
+    description = models.CharField(null=True, blank=True, max_length=200,
+                    help_text='''Official course title (e.g. <em>Introductory Writing</em> for English 101)''')    
     academic_location = models.ForeignKey("Location", null=True, blank=True)    
     def full_name(self):
         return u'%s %s - %s' % (self.academic_field,
