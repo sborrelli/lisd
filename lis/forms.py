@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from lis.models import Session, Student
+from django.forms import TextInput
 
 class SessionAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -13,5 +14,8 @@ class SessionAdminForm(forms.ModelForm):
     clear_existing = forms.BooleanField(required=False)
 
     class Meta:
-        model = Session        
+        model = Session
+        widgets = {
+          'description': TextInput(attrs={'size':'60em'}),
+        }
     

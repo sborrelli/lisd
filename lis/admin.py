@@ -34,10 +34,8 @@ def calculate_term(date):
 class SessionAdmin(admin.ModelAdmin):
     form = SessionAdminForm
     fieldsets = [
-        (None,                  {'fields': ['campus', 'session_format', 'date', 'academic_term', 'session_type',
-                                            'description', 'librarian', 'course', 'section',
-                                           'instructor', 
-                                           'number_of_users', 'gov_docs'],
+        (None,                  {'fields': [('session_format', 'campus'), ('date', 'academic_term'), ('session_type',
+                                            'description'), ('librarian', 'number_of_users', 'gov_docs'), ('course', 'section', 'instructor')],
                                  'description': 'Fields in <b>boldface</b> are required.<br>'}),
         ('Multiple Librarians',            {'fields': ['librarians'], 'classes': ['collapse']}),
         ('Students',            {'fields': [('students_list','clear_existing'),'students'], 'classes': ['collapse']})
@@ -66,18 +64,18 @@ class SessionAdmin(admin.ModelAdmin):
             #form.add_students(obj, csv_file)
             import_students(obj, csv_file)
 
-    def changelist_view(self, request, extra_context=None):        
-        qs = self.queryset(request)
-        for k,v in request.GET.items():
-            q = Q(**{k: v}) #looks magic? see http://stackoverflow.com/questions/5092336/a-better-way-than-eval-when-translating-keyword-arguments-in-querysets-python            
-            qs = qs.filter(q)
-        total_users = qs.aggregate(Sum('number_of_users'))
-        print "totales:", total_users
-        my_context = {
-            'total_users': total_users['number_of_users__sum'],
-        }
-        return super(SessionAdmin, self).changelist_view(request,
-            extra_context=my_context)
+##    def changelist_view(self, request, extra_context=None):        
+##        qs = self.queryset(request)
+##        for k,v in request.GET.items():
+##            q = Q(**{k: v}) #looks magic? see http://stackoverflow.com/questions/5092336/a-better-way-than-eval-when-translating-keyword-arguments-in-querysets-python            
+##            qs = qs.filter(q)
+##        total_users = qs.aggregate(Sum('number_of_users'))
+##        print "totales:", total_users
+##        my_context = {
+##            'total_users': total_users['number_of_users__sum'],
+##        }
+##        return super(SessionAdmin, self).changelist_view(request,
+##            extra_context=my_context)
 
 admin.site.register(Session, SessionAdmin)
 
