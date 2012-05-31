@@ -188,11 +188,3 @@ class StudentSnapshot(models.Model):
     address_business_act_code = models.CharField(max_length=10, blank=True)
     class Meta:
         db_table = u'lis_student_snapshots'
-
-def add_students_to_session(sender, **kwargs):
-    '''callback function to add students to a session after saving'''
-    session = kwargs.get('instance')    
-    #s = Student.objects.get(wsu_id=4868299)    
-    session.students.add(s)
-
-#post_save.connect(add_students_to_session, sender=Session)
