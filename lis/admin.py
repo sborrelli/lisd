@@ -42,7 +42,7 @@ class SessionAdmin(admin.ModelAdmin):
     ]    
 
     list_display = ('date', 'session_type', 'description',
-                    'number_of_users','librarian', 'course')
+                    'number_of_users','librarian', 'course', 'enrolled_students')
 
     list_filter = ['date', 'session_type', 'librarian']
 
@@ -63,6 +63,9 @@ class SessionAdmin(admin.ModelAdmin):
         if csv_file:
             #form.add_students(obj, csv_file)
             import_students(obj, csv_file)
+
+    def enrolled_students(self, obj):
+        return obj.students.count()
 
     def changelist_view(self, request, extra_context=None):        
         qs = self.queryset(request)
