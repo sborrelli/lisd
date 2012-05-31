@@ -128,26 +128,6 @@ def import_students(session, csv_file):
     for student in dbstudents:        
         session.students.add(student)
 
-##def add_students_to_session(session, student_ids):
-##    '''Links a bunch of students to a session. If the students are not
-##    yet in DB, it creates them first.
-##    @param students: list of WSU IDs
-##    @param session: library instruction session instance'''
-##    dbstudents = []    
-##    #if students don't exist, create them
-##    for row in student_ids:
-##        student_id = row[0] #only interested in the first element, wsu_id
-##        try:
-##            dbstudent = Student.objects.get(wsu_id=int(student_id))
-##            dbstudents.append(dbstudent)
-##        except Student.DoesNotExist:
-##            #create new student
-##            student = Student(wsu_id=int(student_id))
-##            student.save()
-##            dbstudents.append(student)                    
-##    #assign students to session
-##    for student in dbstudents:        
-##        session.students.add(student)
         
 
    
