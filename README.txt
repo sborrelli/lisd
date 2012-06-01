@@ -1,4 +1,25 @@
+##/*
+##* Copyright (c) 2012 Dario Alvarez Miranda, Steve Borrelli
+##*
+##* Permission is hereby granted, free of charge, to any person obtaining a copy of this
+##* software and associated documentation files (the "Software"), to deal in the Software
+##* without restriction, including without limitation the rights to use, copy, modify, 
+##* merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
+##* permit persons to whom the Software is furnished to do so, subject to the following conditions:
+##* 
+##* 
+##* The above copyright notice and this permission notice shall be included in all copies or 
+##* substantial portions of the Software.
+##* 
+##* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
+##* BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+##* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+##* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+##* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+##*/
+
 Library Intruction Sessions Database
+=====================================
 
 LISD is a system to record "instruction sessions" by librarians to students and visitors at the University. It's made using the Django framework. This document describes briefly the technical details of the system.
 
@@ -55,4 +76,13 @@ The views are queries that can be exported to Excel files. There are two of them
 Installation
 ------------
 
-TBD
+To install and run the application, you need to
+
+1. Download the zip bundle from the project website at http://code.google.com/p/lisd/
+2. Have python 2.7+ and django 1.3+ installed in your host/server
+3. Unzip
+4. Manage.py syncdb
+5. Optionally, load DB with the sample data provided, sample_data.sql in db folder. The file is a MySQL script.
+
+
+
